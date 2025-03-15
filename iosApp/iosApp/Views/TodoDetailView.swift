@@ -11,13 +11,13 @@ import shared
 
 struct TodoDetailView: View {
     @ObservedObject var viewModel: TodoListViewModel
-    @State private var todo: TodoModel
+    @State private var todo: Todo
     @State private var editedTitle: String
     @Environment(\.dismiss) private var dismiss
     @State private var titleUpdated = false
     @State private var updateButtonScale: CGFloat = 1.0
     
-    init(viewModel: TodoListViewModel, todo: TodoModel) {
+    init(viewModel: TodoListViewModel, todo: Todo) {
         self.viewModel = viewModel
         _todo = State(initialValue: todo)
         _editedTitle = State(initialValue: todo.title)
@@ -121,9 +121,9 @@ struct TodoDetailView: View {
     }
 }
 
-#Preview {
-    TodoDetailView(
-        viewModel: TodoListViewModel(),
-        todo: TodoModel.sample1
-    )
-}
+//#Preview {
+//    TodoDetailView(
+//        viewModel: TodoListViewModel(),
+//        todo: TodoModel.sample1
+//    )
+//}

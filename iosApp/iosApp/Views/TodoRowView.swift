@@ -7,9 +7,10 @@
 //
 
 import SwiftUI
+import shared
 
 struct TodoRowView: View {
-    let todo: TodoModel
+    let todo: Todo
     let onToggle: () -> Void
     
     @State private var checkScale: CGFloat = 1.0
@@ -43,15 +44,15 @@ struct TodoRowView: View {
 }
 
 
-#Preview {
-    VStack {
-        TodoRowView(
-            todo: TodoModel.sample1,
-            onToggle: {}
-        )
-        TodoRowView(
-            todo: TodoModel.sample2,
-            onToggle: {}
-        )
-    }
-}
+//#Preview {
+//    VStack {
+//        TodoRowView(
+//            todo: TodoModel.sample1,
+//            onToggle: {}
+//        )
+//        TodoRowView(
+//            todo: TodoModel.sample2,
+//            onToggle: {}
+//        )
+//    }
+//}

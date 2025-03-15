@@ -5,7 +5,11 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class Todo(
     val id: Int,
-    val title: String,
-    val completed: Boolean,
+    var title: String,
+    var completed: Boolean,
     val userId: Int
-)
+) {
+    fun toggle() {
+        this.completed = !this.completed
+    }
+}

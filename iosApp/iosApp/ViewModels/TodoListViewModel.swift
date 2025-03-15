@@ -9,56 +9,51 @@
 import Foundation
 import shared
 
+@MainActor
 class TodoListViewModel: ObservableObject {
-    @Published var todos: [TodoModel] = []
+    @Published var todos: [Todo] = []
     @Published var isLoading = false
     @Published var errorMessage: String? = nil
     
     let sdk = TodoSDK()
-    
-    func fetchTodos() {
-        isLoading = true
-        sdk.fetchTodos { [weak self] todos, error in
-            DispatchQueue.main.async {
-                self?.isLoading = false
-                
-                if let error = error {
-                    self?.errorMessage = error.message ?? "Unknown error"
-                    return
-                }
-                
-                if let todos = todos {
-                    self?.todos = todos.map { TodoModel(original: $0) }
-                }
-            }
+
+    func myfetchTodos() async {
+        do {
+            try await self.todos = TodoRepository().fetchTodos()
+        } catch {
+            self.errorMessage = error.localizedDescription
+            print("Error fetching todos.")
         }
     }
     
-    func toggleCompletion(for todo: TodoModel) {
+//    func fetchTodos() {
+//        isLoading = true
+//        sdk.fetchTodos { [weak self] todos, error in
+//            DispatchQueue.main.async {
+//                self?.isLoading = false
+//                
+//                if let error = error {
+//                    self?.errorMessage = error.message ?? "Unknown error"
+//                    return
+//                }
+//                
+//                if let todos = todos {
+//                    self?.todos = todos.map { TodoModel(original: $0) }
+//                }
+//            }
+//        }
+//    }
+//    
+    func toggleCompletion(for todo: Todo) {
         // Immediately perform the change locally
-        todo.completed.toggle()
-        
-        // Update the original model for potential API call
-        todo.updateOriginal()
-        
-        // Send the change to API (knowing it's a mock)
-        sdk.toggleTodoCompletion(todo: todo.original) { [weak self] updatedTodo, error in
-            DispatchQueue.main.async {
-                if let error = error {
-                    // Show error, but DON'T revert local change
-                    self?.errorMessage = "Change couldn't be saved to server (mock API): \(error.message ?? "Unknown error")"
-                }
-                
-                // Even in case of success, we won't use the returned data,
-                // because we know the mock API doesn't actually change anything
-            }
-        }
+        todo.toggle()
+
         
         // Important: We must explicitly notify that the object has changed (for reference types)
         objectWillChange.send()
     }
     
-    func updateTodoTitle(for todo: TodoModel, newTitle: String, completion: ((Bool) -> Void)? = nil) {
+    func updateTodoTitle(for todo: Todo, newTitle: String, completion: ((Bool) -> Void)? = nil) {
         // Don't do anything if the title hasn't changed
         guard newTitle != todo.title else {
             completion?(false)
@@ -67,25 +62,7 @@ class TodoListViewModel: ObservableObject {
         
         // Immediately perform the change locally
         todo.title = newTitle
-        
-        // Update the original model for potential API call
-        todo.updateOriginal()
-        
-        // Send the change to API (knowing it's a mock)
-        sdk.updateTodoTitle(todo: todo.original, newTitle: newTitle) { [weak self] updatedTodo, error in
-            DispatchQueue.main.async {
-                if let error = error {
-                    // Show error, but DON'T revert local change
-                    self?.errorMessage = "Change couldn't be saved to server (mock API): \(error.message ?? "Unknown error")"
-                    completion?(false)
-                    return
-                }
-                
-                // Even in case of success, we won't use the returned data,
-                // because we know the mock API doesn't actually change anything
-                completion?(true)
-            }
-        }
+
         
         // Important: We must explicitly notify that the object has changed
         objectWillChange.send()

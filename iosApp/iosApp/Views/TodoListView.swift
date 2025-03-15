@@ -9,15 +9,20 @@
 import SwiftUI
 import shared
 
+extension Todo: Identifiable {
+    // The id property is already in your Kotlin class,
+    // so you don't need to redefine it
+}
+
 struct TodoListView: View {
     @StateObject private var viewModel = TodoListViewModel()
-    @State private var selectedTodo: TodoModel? = nil
+    @State private var selectedTodo: Todo? = nil
     
     var body: some View {
         NavigationStack {
             ZStack {
                 List {
-                    ForEach(viewModel.todos) { todo in
+                    ForEach(viewModel.todos, id:\.id) { todo in
                         TodoRowView(
                             todo: todo,
                             onToggle: {
@@ -79,7 +84,9 @@ struct TodoListView: View {
             .animation(.easeInOut, value: viewModel.isLoading)
         }
         .onAppear {
-            viewModel.fetchTodos()
+            Task {
+                await viewModel.myfetchTodos()
+            }
         }
     }
 }

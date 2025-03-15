@@ -31,4 +31,7 @@ class TodoModel: Identifiable {
     func updateOriginal() {
         self.original = Todo(id: Int32(id), title: title, completed: completed, userId: Int32(userId))
     }
+    
+    static let sample1 = TodoModel(original: Todo(id: 999, title: "Nice and long work to do.", completed: true, userId: 99))
+    static let sample2 = TodoModel(original: Todo(id: 666, title: "Sysiphos's job.", completed: false, userId: 99))
 }

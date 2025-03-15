@@ -11,20 +11,26 @@ import shared
 
 struct TodoListView: View {
     @StateObject private var viewModel = TodoListViewModel()
+    @State private var selectedTodo: TodoModel? = nil
     
     var body: some View {
-        NavigationView {
+        NavigationStack {
             ZStack {
                 List {
                     ForEach(viewModel.todos) { todo in
-                        NavigationLink(destination: TodoDetailView(todo: todo, viewModel: viewModel)) {
-                            TodoRowView(todo: todo, onToggle: {
+                        TodoRowView(
+                            todo: todo,
+                            onToggle: {
                                 viewModel.toggleCompletion(for: todo)
-                            })
+                            }
+                        )
+                        .contentShape(Rectangle())
+                        .onTapGesture {
+                            selectedTodo = todo
                         }
                     }
                 }
-                .listStyle(InsetGroupedListStyle())
+                .listStyle(.plain)
                 
                 if viewModel.isLoading {
                     ProgressView()
@@ -32,15 +38,25 @@ struct TodoListView: View {
                 }
             }
             .navigationTitle("Checkmate")
+            .toolbar {
+                ToolbarItem(placement: .bottomBar) {
+                    Text("Changes are local only (mock API)")
+                        .font(.caption)
+                        .foregroundColor(.secondary)
+                }
+            }
             .alert(isPresented: Binding<Bool>(
                 get: { viewModel.errorMessage != nil },
                 set: { if !$0 { viewModel.errorMessage = nil } }
             )) {
                 Alert(
-                    title: Text("Error"),
+                    title: Text("Notice"),
                     message: Text(viewModel.errorMessage ?? "Unknown error"),
                     dismissButton: .default(Text("OK"))
                 )
+            }
+            .sheet(item: $selectedTodo) { todo in
+                TodoDetailView(todo: todo, viewModel: viewModel)
             }
         }
         .onAppear {
@@ -48,29 +64,6 @@ struct TodoListView: View {
         }
     }
 }
-
-struct TodoRowView: View {
-    let todo: TodoModel
-    let onToggle: () -> Void
-    
-    var body: some View {
-        HStack {
-            Image(systemName: todo.completed ? "checkmark.circle.fill" : "circle")
-                .foregroundColor(todo.completed ? .green : .gray)
-                .imageScale(.large)
-                .onTapGesture {
-                    onToggle()
-                }
-            
-            Text(todo.title)
-                .strikethrough(todo.completed)
-                .foregroundColor(todo.completed ? .gray : .primary)
-                .lineLimit(1)
-                .padding(.vertical, 8)
-        }
-    }
-}
-
 #Preview {
     TodoListView()
 }

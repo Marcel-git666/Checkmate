@@ -8,7 +8,6 @@
 
 import Foundation
 import shared
-import Combine
 
 class TodoListViewModel: ObservableObject {
     @Published var todos: [TodoModel] = []
@@ -36,23 +35,26 @@ class TodoListViewModel: ObservableObject {
     }
     
     func toggleCompletion(for todo: TodoModel) {
-        todo.updateOriginal() // Make sure we have the latest state
+        // Immediately perform the change locally
+        todo.completed.toggle()
         
+        // Update the original model for potential API call
+        todo.updateOriginal()
+        
+        // Send the change to API (knowing it's a mock)
         sdk.toggleTodoCompletion(todo: todo.original) { [weak self] updatedTodo, error in
             DispatchQueue.main.async {
                 if let error = error {
-                    self?.errorMessage = error.message ?? "Unknown error"
-                    return
+                    // Show error, but DON'T revert local change
+                    self?.errorMessage = "Change couldn't be saved to server (mock API): \(error.message ?? "Unknown error")"
                 }
                 
-                if let updatedTodo = updatedTodo {
-                    // Find and update the todo in our list
-                    if let index = self?.todos.firstIndex(where: { $0.id == Int(updatedTodo.id) }) {
-                        self?.todos[index].completed = updatedTodo.completed
-                        self?.todos[index].original = updatedTodo
-                    }
-                }
+                // Even in case of success, we won't use the returned data,
+                // because we know the mock API doesn't actually change anything
             }
         }
+        
+        // Important: We must explicitly notify that the object has changed (for reference types)
+        objectWillChange.send()
     }
-} 
+}

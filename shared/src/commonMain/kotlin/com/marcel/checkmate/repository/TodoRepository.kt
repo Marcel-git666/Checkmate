@@ -1,5 +1,6 @@
 package com.marcel.checkmate.repository
 
+import com.marcel.checkmate.api.ApiConfig
 import com.marcel.checkmate.model.Todo
 import io.ktor.client.*
 import io.ktor.client.call.*
@@ -21,17 +22,17 @@ class TodoRepository {
     }
 
     suspend fun fetchTodos(): List<Todo> {
-        return client.get("https://jsonplaceholder.typicode.com/todos").body()
+        return client.get(ApiConfig.TODOS_ENDPOINT).body()
     }
 
     suspend fun fetchTodo(id: Int): Todo {
-        return client.get("https://jsonplaceholder.typicode.com/todos/$id").body()
+        return client.get(ApiConfig.todoUrl(id)).body()
     }
 
     suspend fun toggleTodoCompletion(todo: Todo): Todo {
         val updatedTodo = todo.copy(completed = !todo.completed)
 
-        return client.put("https://jsonplaceholder.typicode.com/todos/${todo.id}") {
+        return client.put(ApiConfig.todoUrl(todo.id)) {
             contentType(ContentType.Application.Json)
             setBody(updatedTodo)
         }.body()
@@ -40,7 +41,7 @@ class TodoRepository {
     suspend fun updateTodoTitle(todo: Todo, newTitle: String): Todo {
         val updatedTodo = todo.copy(title = newTitle)
 
-        return client.put("https://jsonplaceholder.typicode.com/todos/${todo.id}") {
+        return client.put(ApiConfig.todoUrl(todo.id)) {
             contentType(ContentType.Application.Json)
             setBody(updatedTodo)
         }.body()

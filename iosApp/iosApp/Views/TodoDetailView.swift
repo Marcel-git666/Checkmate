@@ -15,11 +15,41 @@ struct TodoDetailView: View {
     @State private var editedTitle: String
     @Environment(\.dismiss) private var dismiss
     @State private var titleUpdated = false
+    @State private var updateButtonScale: CGFloat = 1.0
     
     init(viewModel: TodoListViewModel, todo: TodoModel) {
         self.viewModel = viewModel
         _todo = State(initialValue: todo)
         _editedTitle = State(initialValue: todo.title)
+    }
+    
+    private func handleTitleUpdate() {
+        // Button press animation
+        withAnimation(.spring(response: 0.2, dampingFraction: 0.6)) {
+            updateButtonScale = 0.95
+        }
+        
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+            withAnimation(.spring(response: 0.2, dampingFraction: 0.6)) {
+                updateButtonScale = 1.0
+            }
+            
+            // Call the ViewModel method which handles the actual data update
+            viewModel.updateTodoTitle(for: todo, newTitle: editedTitle) { success in
+                if success {
+                    withAnimation(.easeInOut(duration: 0.3)) {
+                        titleUpdated = true
+                    }
+                    
+                    // Reset the "Updated" text after a delay
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
+                        withAnimation(.easeInOut(duration: 0.3)) {
+                            titleUpdated = false
+                        }
+                    }
+                }
+            }
+        }
     }
     
     var body: some View {
@@ -30,11 +60,17 @@ struct TodoDetailView: View {
                         .padding()
                         .background(Color(.systemGray6))
                         .cornerRadius(8)
+                        .onSubmit {
+                            // Trigger update when Enter is pressed
+                            handleTitleUpdate()
+                        }
                     
                     Toggle("Completed", isOn: Binding(
                         get: { todo.completed },
                         set: { _ in
-                            viewModel.toggleCompletion(for: todo)
+                            withAnimation(.spring(response: 0.3)) {
+                                viewModel.toggleCompletion(for: todo)
+                            }
                         }
                     ))
                     .padding()
@@ -50,22 +86,16 @@ struct TodoDetailView: View {
                 
                 Section {
                     Button(titleUpdated ? "Title Updated!" : "Update Title") {
-                        if editedTitle != todo.title {
-                            viewModel.updateTodoTitle(for: todo, newTitle: editedTitle)
-                            titleUpdated = true
-                            
-                            // Reset the "Updated" text after a delay
-                            DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
-                                titleUpdated = false
-                            }
-                        }
+                        handleTitleUpdate()
                     }
                     .frame(maxWidth: .infinity)
                     .padding()
                     .background(titleUpdated ? Color.green : Color.blue)
                     .foregroundColor(.white)
                     .cornerRadius(8)
+                    .scaleEffect(updateButtonScale)
                     .disabled(editedTitle == todo.title)
+                    .animation(.easeInOut(duration: 0.2), value: titleUpdated)
                 }
             }
             .navigationTitle("Task Details")

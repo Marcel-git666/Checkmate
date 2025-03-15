@@ -58,7 +58,13 @@ class TodoListViewModel: ObservableObject {
         objectWillChange.send()
     }
     
-    func updateTodoTitle(for todo: TodoModel, newTitle: String) {
+    func updateTodoTitle(for todo: TodoModel, newTitle: String, completion: ((Bool) -> Void)? = nil) {
+        // Don't do anything if the title hasn't changed
+        guard newTitle != todo.title else {
+            completion?(false)
+            return
+        }
+        
         // Immediately perform the change locally
         todo.title = newTitle
         
@@ -71,11 +77,13 @@ class TodoListViewModel: ObservableObject {
                 if let error = error {
                     // Show error, but DON'T revert local change
                     self?.errorMessage = "Change couldn't be saved to server (mock API): \(error.message ?? "Unknown error")"
+                    completion?(false)
                     return
                 }
                 
                 // Even in case of success, we won't use the returned data,
                 // because we know the mock API doesn't actually change anything
+                completion?(true)
             }
         }
         

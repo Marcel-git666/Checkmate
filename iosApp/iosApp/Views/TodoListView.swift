@@ -21,20 +21,28 @@ struct TodoListView: View {
                         TodoRowView(
                             todo: todo,
                             onToggle: {
-                                viewModel.toggleCompletion(for: todo)
+                                withAnimation(.spring(response: 0.3)) {
+                                    viewModel.toggleCompletion(for: todo)
+                                }
                             }
                         )
                         .contentShape(Rectangle())
                         .onTapGesture {
                             selectedTodo = todo
                         }
+                        .transition(.asymmetric(
+                            insertion: .scale.combined(with: .opacity),
+                            removal: .opacity
+                        ))
                     }
+                    .animation(.spring(response: 0.3), value: viewModel.todos)
                 }
                 .listStyle(.plain)
                 
                 if viewModel.isLoading {
                     ProgressView()
                         .scaleEffect(1.5)
+                        .transition(.opacity)
                 }
             }
             .navigationTitle("Checkmate")
@@ -58,12 +66,14 @@ struct TodoListView: View {
             .sheet(item: $selectedTodo) { todo in
                 TodoDetailView(viewModel: viewModel, todo: todo)
             }
+            .animation(.easeInOut, value: viewModel.isLoading)
         }
         .onAppear {
             viewModel.fetchTodos()
         }
     }
 }
+
 #Preview {
     TodoListView()
 }

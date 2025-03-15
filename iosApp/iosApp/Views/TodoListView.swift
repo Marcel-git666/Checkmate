@@ -35,7 +35,16 @@ struct TodoListView: View {
                             removal: .opacity
                         ))
                     }
+                    .onDelete { offsets in
+                        viewModel.todos.remove(atOffsets: offsets)
+                    }
+                    .onMove { source, dest in
+                        viewModel.todos.move(fromOffsets: source, toOffset: dest)
+                    }
                     .animation(.spring(response: 0.3), value: viewModel.todos)
+                }
+                .toolbar {
+                    ToolbarItem { EditButton() }
                 }
                 .listStyle(.plain)
                 

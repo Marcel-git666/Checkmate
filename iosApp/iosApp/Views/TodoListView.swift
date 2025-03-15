@@ -30,6 +30,7 @@ struct TodoListView: View {
                         .onTapGesture {
                             selectedTodo = todo
                         }
+                        .listRowBackground(selectedTodo?.id == todo.id ? Color.green.opacity(0.2) : Color.clear)
                         .transition(.asymmetric(
                             insertion: .scale.combined(with: .opacity),
                             removal: .opacity

@@ -56,7 +56,7 @@ struct TodoListView: View {
                 )
             }
             .sheet(item: $selectedTodo) { todo in
-                TodoDetailView(todo: todo, viewModel: viewModel)
+                TodoDetailView(viewModel: viewModel, todo: todo)
             }
         }
         .onAppear {

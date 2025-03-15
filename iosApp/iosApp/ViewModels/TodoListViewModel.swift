@@ -57,4 +57,29 @@ class TodoListViewModel: ObservableObject {
         // Important: We must explicitly notify that the object has changed (for reference types)
         objectWillChange.send()
     }
+    
+    func updateTodoTitle(for todo: TodoModel, newTitle: String) {
+        // Immediately perform the change locally
+        todo.title = newTitle
+        
+        // Update the original model for potential API call
+        todo.updateOriginal()
+        
+        // Send the change to API (knowing it's a mock)
+        sdk.updateTodoTitle(todo: todo.original, newTitle: newTitle) { [weak self] updatedTodo, error in
+            DispatchQueue.main.async {
+                if let error = error {
+                    // Show error, but DON'T revert local change
+                    self?.errorMessage = "Change couldn't be saved to server (mock API): \(error.message ?? "Unknown error")"
+                    return
+                }
+                
+                // Even in case of success, we won't use the returned data,
+                // because we know the mock API doesn't actually change anything
+            }
+        }
+        
+        // Important: We must explicitly notify that the object has changed
+        objectWillChange.send()
+    }
 }

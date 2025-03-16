@@ -44,15 +44,15 @@ struct TodoRowView: View {
 }
 
 
-//#Preview {
-//    VStack {
-//        TodoRowView(
-//            todo: TodoModel.sample1,
-//            onToggle: {}
-//        )
-//        TodoRowView(
-//            todo: TodoModel.sample2,
-//            onToggle: {}
-//        )
-//    }
-//}
+#Preview {
+    VStack {
+        TodoRowView(
+            todo: Todo.sample1,
+            onToggle: {}
+        )
+        TodoRowView(
+            todo: Todo.sample2,
+            onToggle: {}
+        )
+    }
+}

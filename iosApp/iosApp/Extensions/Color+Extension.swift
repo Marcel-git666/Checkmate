@@ -7,12 +7,13 @@
 //
 
 import SwiftUI
+import shared
 
 extension Color {
     // Primary green colors for the Checkmate app
-    static let primaryGreen = Color(hex: "#2E8B57")     // Sea Green
-    static let secondaryGreen = Color(hex: "#98FB98")   // Pale Green
-    static let accentGreen = Color(hex: "#3CB371")      // Medium Sea Green
+    static let primaryGreen = Color(hex: KtColors().primaryGreen)
+    static let secondaryGreen = Color(hex: KtColors().secondaryGreen)   // Pale Green
+    static let accentGreen = Color(hex: KtColors().accentGreen)      // Medium Sea Green
     
     // Private hex to color initializer
     private init(hex: String) {

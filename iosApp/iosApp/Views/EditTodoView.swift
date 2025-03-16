@@ -9,9 +9,9 @@
 import SwiftUI
 import shared
 
-struct TodoDetailView: View {
+struct EditTodoView: View {
     @ObservedObject var viewModel: TodoListViewModel
-    @State private var todo: Todo
+    let todo: Todo
     @State private var editedTitle: String
     @Environment(\.dismiss) private var dismiss
     @State private var titleUpdated = false
@@ -19,7 +19,7 @@ struct TodoDetailView: View {
     
     init(viewModel: TodoListViewModel, todo: Todo) {
         self.viewModel = viewModel
-        _todo = State(initialValue: todo)
+        self.todo = todo
         _editedTitle = State(initialValue: todo.title)
     }
     

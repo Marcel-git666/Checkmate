@@ -41,7 +41,7 @@ struct TodoListView: View {
             }
             // Show detail sheet when a todo is selected
             .sheet(item: $selectedTodo) { todo in
-                TodoDetailView(viewModel: viewModel, todo: todo)
+                EditTodoView(viewModel: viewModel, todo: todo)
             }
             // Show add sheet when the add button is tapped
             .sheet(isPresented: $showingAddSheet) {

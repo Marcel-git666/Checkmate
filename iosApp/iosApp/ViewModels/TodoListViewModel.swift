@@ -14,8 +14,6 @@ class TodoListViewModel: ObservableObject {
     @Published var todos: [Todo] = []
     @Published var isLoading = false
     @Published var errorMessage: String? = nil
-    
-    let sdk = TodoSDK()
 
     func myfetchTodos() async {
         do {
@@ -25,30 +23,14 @@ class TodoListViewModel: ObservableObject {
             print("Error fetching todos.")
         }
     }
-    
-//    func fetchTodos() {
-//        isLoading = true
-//        sdk.fetchTodos { [weak self] todos, error in
-//            DispatchQueue.main.async {
-//                self?.isLoading = false
-//                
-//                if let error = error {
-//                    self?.errorMessage = error.message ?? "Unknown error"
-//                    return
-//                }
-//                
-//                if let todos = todos {
-//                    self?.todos = todos.map { TodoModel(original: $0) }
-//                }
-//            }
-//        }
-//    }
-//    
+      
     func toggleCompletion(for todo: Todo) {
         // Immediately perform the change locally
         todo.toggle()
-
-        
+        Task {
+            try await TodoRepository().toggleTodoCompletion(todo: todo)
+            
+        }
         // Important: We must explicitly notify that the object has changed (for reference types)
         objectWillChange.send()
     }

@@ -14,7 +14,7 @@ struct AddTodoSheet: View {
     @Binding var isPresented: Bool
     @State private var title: String = ""
     @State private var isAdding: Bool = false
-    
+
     var body: some View {
         NavigationStack {
             Form {
@@ -42,7 +42,7 @@ struct AddTodoSheet: View {
                     }
                     .frame(maxWidth: .infinity)
                     .padding()
-                    .background(Color.blue)
+                    .background(Color.primaryGreen)
                     .foregroundColor(.white)
                     .cornerRadius(8)
                     .disabled(title.isEmpty || isAdding)

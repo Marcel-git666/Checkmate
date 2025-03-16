@@ -24,6 +24,13 @@ struct TodoListView: View {
                 }
             }
             .navigationTitle("Checkmate")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbarColorScheme(.dark, for: .navigationBar)
+            .toolbarBackground(
+                Color.primaryGreen.opacity(0.9),
+                for: .navigationBar
+            )
+            .toolbarBackground(.visible, for: .navigationBar)
             .toolbar {
                 leadingToolbarItems
                 trailingToolbarItems

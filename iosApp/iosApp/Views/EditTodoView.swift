@@ -90,7 +90,7 @@ struct EditTodoView: View {
                     }
                     .frame(maxWidth: .infinity)
                     .padding()
-                    .background(titleUpdated ? Color.green : Color.blue)
+                    .background(titleUpdated ? Color.accentGreen : Color.primaryGreen)
                     .foregroundColor(.white)
                     .cornerRadius(8)
                     .scaleEffect(updateButtonScale)

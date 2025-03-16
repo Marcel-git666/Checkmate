@@ -18,7 +18,7 @@ struct TodoRowView: View {
     var body: some View {
         HStack {
             Image(systemName: todo.completed ? "checkmark.circle.fill" : "circle")
-                .foregroundColor(todo.completed ? .green : .gray)
+                .foregroundColor(todo.completed ? Color.accentGreen : .gray)
                 .imageScale(.large)
                 .scaleEffect(checkScale)
                 .onTapGesture {

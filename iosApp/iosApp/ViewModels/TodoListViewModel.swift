@@ -26,7 +26,7 @@ class TodoListViewModel: ObservableObject {
         self.isLoading = true
         do {
             print("Get some sleep to work better...")
-            try await Task.sleep(nanoseconds: 3_000_000_000)
+            try await Task.sleep(nanoseconds: 1_000_000_000)
             print("Sleep has ended")
             print("Starting to fetch todos...")
             try await self.todos = repository.fetchTodos()

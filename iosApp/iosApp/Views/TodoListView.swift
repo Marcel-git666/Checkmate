@@ -17,17 +17,10 @@ struct TodoListView: View {
     var body: some View {
         NavigationStack {
             ZStack {
-                VStack {
-                    if viewModel.todos.isEmpty {
-                        Text("No todos found")
-                            .foregroundColor(.gray)
-                    } else {
-                        todoList
-                    }
-                    
-                    if viewModel.isLoading {
-                        loadingOverlay
-                    }
+                todoList
+                
+                if viewModel.isLoading {
+                    loadingOverlay
                 }
             }
             .navigationTitle("Checkmate")
@@ -100,15 +93,15 @@ struct TodoListView: View {
             Color.black.opacity(0.3)
                 .edgesIgnoringSafeArea(.all)
             
-            VStack {
+            VStack(spacing: 20) {
                 ProgressView()
                     .progressViewStyle(CircularProgressViewStyle(tint: .white))
                     .scaleEffect(2.0)
                 
-                Text("Loading...")
+                Text("Loading Tasks for at least 1 second check viewModel.fetch :) ...")
                     .foregroundColor(.white)
-                    .padding(.top)
                     .font(.headline)
+                    .multilineTextAlignment(.center)
             }
             .padding()
             .background(Color.primaryGreen)

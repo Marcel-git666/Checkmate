@@ -19,4 +19,8 @@ extension Todo: @retroactive Identifiable {
     static var sample2: Todo {
         return Todo(id: 2, title: "Complete SwiftUI tutorial", completed: true, userId: 1)
     }
+    
+    static var todos: [Todo] {
+        [sample1, sample2]
+    }
 }

@@ -41,7 +41,7 @@ class MockTodoRepository: TodoRepositoryProtocol {
         
         let maxId = todos.map { $0.id }.max() ?? 0
         let newTodo = Todo(id: maxId + 1, title: title, completed: false, userId: userId)
-        todos.append(newTodo)
+        todos.insert(newTodo, at: 0)
         return newTodo
     }
     

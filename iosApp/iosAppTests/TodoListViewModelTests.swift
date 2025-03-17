@@ -53,8 +53,8 @@ struct TodoListViewModelTests {
         let success = await viewModel.createTodo(title: "New Test Todo")
         
         #expect(success)
-        #expect(viewModel.todos.count == initialCount + 1)
-        #expect(viewModel.todos[0].title == "New Test Todo")
+        #expect(mockRepository.todos.count == initialCount + 1)
+        #expect(mockRepository.todos[0].title == "New Test Todo")
     }
     
     @Test func createEmptyTodo() async throws {
@@ -65,7 +65,7 @@ struct TodoListViewModelTests {
         let success = await viewModel.createTodo(title: "")
         
         #expect(!success)
-        #expect(viewModel.todos.count == initialCount)
+        #expect(mockRepository.todos.count == initialCount)
         #expect(viewModel.errorMessage == "Todo title cannot be empty")
     }
     

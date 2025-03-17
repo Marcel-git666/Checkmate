@@ -11,16 +11,23 @@ import SwiftUI
 import shared
 
 struct TodoListView: View {
-    @StateObject private var viewModel = TodoListViewModel()
+    @ObservedObject var viewModel: TodoListViewModel
     @Environment(\.navigator) private var navigator
     
     var body: some View {
         NavigationStack {
             ZStack {
-                todoList
-                
-                if viewModel.isLoading {
-                    loadingOverlay
+                VStack {
+                    if viewModel.todos.isEmpty {
+                        Text("No todos found")
+                            .foregroundColor(.gray)
+                    } else {
+                        todoList
+                    }
+                    
+                    if viewModel.isLoading {
+                        loadingOverlay
+                    }
                 }
             }
             .navigationTitle("Checkmate")
@@ -89,9 +96,27 @@ struct TodoListView: View {
     }
     
     private var loadingOverlay: some View {
-        ProgressView()
-            .scaleEffect(1.5)
-            .transition(.opacity)
+        ZStack {
+            Color.black.opacity(0.3)
+                .edgesIgnoringSafeArea(.all)
+            
+            VStack {
+                ProgressView()
+                    .progressViewStyle(CircularProgressViewStyle(tint: .white))
+                    .scaleEffect(2.0)
+                
+                Text("Loading...")
+                    .foregroundColor(.white)
+                    .padding(.top)
+                    .font(.headline)
+            }
+            .padding()
+            .background(Color.primaryGreen)
+            .cornerRadius(12)
+            .shadow(radius: 10)
+        }
+        .transition(.opacity)
+        .zIndex(1)
     }
     
     // MARK: - Toolbar Items
@@ -122,5 +147,5 @@ struct TodoListView: View {
 }
 
 #Preview {
-    TodoListView()
+    TodoListView(viewModel: TodoListViewModel(repository: MockTodoRepository()))
 }

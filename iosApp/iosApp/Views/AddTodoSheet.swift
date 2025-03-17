@@ -84,7 +84,5 @@ struct AddTodoSheet: View {
 }
 
 #Preview {
-    AddTodoSheet(
-        viewModel: TodoListViewModel()
-    )
+    AddTodoSheet(viewModel: TodoListViewModel(repository: MockTodoRepository()))
 }

@@ -12,14 +12,15 @@ import shared
 struct EditTodoView: View {
     @ObservedObject var viewModel: TodoListViewModel
     let todo: Todo
-    @State private var editedTitle: String
     @Environment(\.navigator) private var navigator
+    @State private var editedTitle: String
     @State private var titleUpdated = false
     @State private var updateButtonScale: CGFloat = 1.0
     
     init(viewModel: TodoListViewModel, todo: Todo) {
         self.viewModel = viewModel
         self.todo = todo
+        // Initialize the state property
         _editedTitle = State(initialValue: todo.title)
     }
     
@@ -121,9 +122,9 @@ struct EditTodoView: View {
     }
 }
 
-//#Preview {
-//    TodoDetailView(
-//        viewModel: TodoListViewModel(),
-//        todo: TodoModel.sample1
-//    )
-//}
+#Preview {
+    EditTodoView(
+        viewModel: TodoListViewModel(repository: MockTodoRepository()),
+        todo: Todo.sample1
+    )
+}

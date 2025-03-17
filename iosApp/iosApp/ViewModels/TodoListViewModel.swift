@@ -16,14 +16,26 @@ class TodoListViewModel: ObservableObject {
     @Published var errorMessage: String? = nil
     // Default user ID to use for new todos
     private let defaultUserId = 1
+    private let repository: TodoRepositoryProtocol
+    
+    init(repository: TodoRepositoryProtocol) {
+        self.repository = repository
+    }
     
     func fetchTodos() async {
+        self.isLoading = true
         do {
-            try await self.todos = TodoRepository().fetchTodos()
+            print("Get some sleep to work better...")
+            try await Task.sleep(nanoseconds: 3_000_000_000)
+            print("Sleep has ended")
+            print("Starting to fetch todos...")
+            try await self.todos = repository.fetchTodos()
+            print("Fetched todos count: \(self.todos.count)")
         } catch {
             self.errorMessage = error.localizedDescription
             print("Error fetching todos.")
         }
+        self.isLoading = false
     }
     
     func createTodo(title: String) async -> Bool {
@@ -34,7 +46,7 @@ class TodoListViewModel: ObservableObject {
         
         isLoading = true
         do {
-            let newTodo = try await TodoRepository().createTodo(title: title, userId: Int32(defaultUserId))
+            let newTodo = try await repository.createTodo(title: title, userId: Int32(defaultUserId))
             
             // Add the new todo to the beginning of our list
             let localId = Int32.random(in: 10000..<Int32.max)
@@ -62,7 +74,7 @@ class TodoListViewModel: ObservableObject {
         Task {
             do {
                 // Try to update on the server
-                try await TodoRepository().toggleTodoCompletion(todo: todo)
+                try await repository.toggleTodoCompletion(todo: todo)
             } catch {
                 // Revert local state if server update fails
                 todo.completed = originalState
@@ -91,7 +103,7 @@ class TodoListViewModel: ObservableObject {
         Task {
             do {
                 // Try to update on the server
-                try await TodoRepository().updateTodoTitle(todo: todo, newTitle: newTitle)
+                try await repository.updateTodoTitle(todo: todo, newTitle: newTitle)
                 completion?(true)
             } catch {
                 // Revert local state if server update fails
@@ -116,9 +128,9 @@ class TodoListViewModel: ObservableObject {
         for todo in todosToDelete {
             Task {
                 do {
-                    let kotlinSuccess = try await TodoRepository().deleteTodo(id: Int32(todo.id))
+                    let kotlinSuccess = try await repository.deleteTodo(id: Int32(todo.id))
                     // Convert KotlinBoolean to Swift Bool
-                    let success = kotlinSuccess.boolValue
+                    let success = kotlinSuccess
                     if !success {
                         // If the server operation failed, add the todo back to the array
                         self.errorMessage = "Server couldn't delete todo #\(todo.id)"

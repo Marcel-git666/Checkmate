@@ -12,7 +12,7 @@ import shared
 
 // Define all possible navigation destinations in the app
 enum TodoDestinations {
-    case list
+    case list(TodoListViewModel)
     case addTodo(TodoListViewModel)
     case editTodo(TodoListViewModel, Todo)
 }
@@ -64,8 +64,8 @@ extension TodoDestinations: NavigationDestination {
     // Define the view for each destination
     var body: some View {
         switch self {
-        case .list:
-            TodoListView()
+        case .list(let viewModel):
+            TodoListView(viewModel: viewModel)
         case .addTodo(let viewModel):
             AddTodoSheet(viewModel: viewModel)
         case .editTodo(let viewModel, let todo):

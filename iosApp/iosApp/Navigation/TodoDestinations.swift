@@ -57,7 +57,7 @@ extension TodoDestinations: NavigationDestination {
         case .addTodo:
             return .sheet
         case .editTodo:
-            return .sheet
+            return .managedCover
         }
     }
     

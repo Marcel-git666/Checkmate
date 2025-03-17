@@ -6,15 +6,16 @@
 //  Copyright © 2025 orgName. All rights reserved.
 //
 
+import Navigator
 import SwiftUI
 import shared
 
 struct AddTodoSheet: View {
     @ObservedObject var viewModel: TodoListViewModel
-    @Binding var isPresented: Bool
     @State private var title: String = ""
     @State private var isAdding: Bool = false
-
+    @Environment(\.navigator) private var navigator
+    
     var body: some View {
         NavigationStack {
             Form {
@@ -53,7 +54,7 @@ struct AddTodoSheet: View {
             .toolbar {
                 ToolbarItem(placement: .navigationBarLeading) {
                     Button("Cancel") {
-                        isPresented = false
+                        navigator.dismiss()
                     }
                 }
             }
@@ -75,7 +76,8 @@ struct AddTodoSheet: View {
             if success {
                 // Reset the form and close
                 title = ""
-                isPresented = false
+                // Use Navigator to dismiss the sheet and return the success value
+                navigator.dismiss()
             }
         }
     }
@@ -83,7 +85,6 @@ struct AddTodoSheet: View {
 
 #Preview {
     AddTodoSheet(
-        viewModel: TodoListViewModel(),
-        isPresented: .constant(true)
+        viewModel: TodoListViewModel()
     )
 }

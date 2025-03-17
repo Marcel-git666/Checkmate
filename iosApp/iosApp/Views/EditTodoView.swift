@@ -13,7 +13,7 @@ struct EditTodoView: View {
     @ObservedObject var viewModel: TodoListViewModel
     let todo: Todo
     @State private var editedTitle: String
-    @Environment(\.dismiss) private var dismiss
+    @Environment(\.navigator) private var navigator
     @State private var titleUpdated = false
     @State private var updateButtonScale: CGFloat = 1.0
     
@@ -107,7 +107,7 @@ struct EditTodoView: View {
                         if editedTitle != todo.title {
                             viewModel.updateTodoTitle(for: todo, newTitle: editedTitle)
                         }
-                        dismiss()
+                        navigator.dismiss()
                     }
                 }
                 

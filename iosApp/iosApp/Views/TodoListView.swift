@@ -6,13 +6,13 @@
 //  Copyright © 2025 orgName. All rights reserved.
 //
 
+import Navigator
 import SwiftUI
 import shared
 
 struct TodoListView: View {
     @StateObject private var viewModel = TodoListViewModel()
-    @State private var selectedTodo: Todo? = nil
-    @State private var showingAddSheet = false
+    @Environment(\.navigator) private var navigator
     
     var body: some View {
         NavigationStack {
@@ -46,14 +46,6 @@ struct TodoListView: View {
                     dismissButton: .default(Text("OK"))
                 )
             }
-            // Show detail sheet when a todo is selected
-            .sheet(item: $selectedTodo) { todo in
-                EditTodoView(viewModel: viewModel, todo: todo)
-            }
-            // Show add sheet when the add button is tapped
-            .sheet(isPresented: $showingAddSheet) {
-                AddTodoSheet(viewModel: viewModel, isPresented: $showingAddSheet)
-            }
             .animation(.easeInOut, value: viewModel.isLoading)
         }
         .onAppear {
@@ -78,9 +70,8 @@ struct TodoListView: View {
                 )
                 .contentShape(Rectangle())
                 .onTapGesture {
-                    selectedTodo = todo
+                    navigator.navigate(to: TodoDestinations.editTodo(viewModel, todo))
                 }
-                .listRowBackground(selectedTodo?.id == todo.id ? Color.green.opacity(0.2) : Color.clear)
                 .transition(.asymmetric(
                     insertion: .scale.combined(with: .opacity),
                     removal: .opacity
@@ -114,7 +105,7 @@ struct TodoListView: View {
     private var trailingToolbarItems: ToolbarItem<(), some View> {
         ToolbarItem(placement: .navigationBarTrailing) {
             Button(action: {
-                showingAddSheet = true
+                navigator.navigate(to: TodoDestinations.addTodo(viewModel))
             }) {
                 Image(systemName: "plus")
             }

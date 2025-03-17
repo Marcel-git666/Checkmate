@@ -66,12 +66,12 @@ struct TodoListView: View {
                         withAnimation(.spring(response: 0.3)) {
                             viewModel.toggleCompletion(for: todo)
                         }
+                    },
+                    onRowTap: {
+                        // Navigate to the edit view when the row is tapped
+                        navigator.navigate(to: TodoDestinations.editTodo(viewModel, todo))
                     }
                 )
-                .contentShape(Rectangle())
-                .onTapGesture {
-                    navigator.navigate(to: TodoDestinations.editTodo(viewModel, todo))
-                }
                 .transition(.asymmetric(
                     insertion: .scale.combined(with: .opacity),
                     removal: .opacity
